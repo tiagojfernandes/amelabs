@@ -60,9 +60,9 @@ variable "os_disk_size_gb" {
 
 # Image Configuration
 variable "windows_sku" {
-  description = "Windows Server SKU to deploy (2022-Datacenter, 2019-Datacenter, etc.)"
+  description = "Windows Server SKU to deploy (e.g. 2025-datacenter-g2, 2025-datacenter-azure-edition, 2022-datacenter-g2)"
   type        = string
-  default     = "2022-Datacenter"
+  default     = "2025-datacenter-g2"
 }
 
 variable "windows_version" {
