@@ -94,7 +94,7 @@ resource "azurerm_linux_web_app" "java" {
   tags       = var.tags
 }
 
-# ----------------- Node.js 20 -----------------
+# ----------------- Node.js 22 -----------------
 resource "azurerm_linux_web_app" "node" {
   name                = local.node_name
   location            = var.location
