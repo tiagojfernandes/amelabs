@@ -36,7 +36,7 @@ resource "azurerm_monitor_data_collection_rule" "vm_insights" {
 
 # DCR Association - Windows VM
 resource "azurerm_monitor_data_collection_rule_association" "windows_vm" {
-  count                   = var.windows_vm_id != null && var.windows_vm_id != "" ? 1 : 0
+  count                   = var.windows_vm_name != null && var.windows_vm_name != "" ? 1 : 0
   name                    = "MSVMI-${var.windows_vm_name}-dcra"
   target_resource_id      = var.windows_vm_id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.vm_insights.id
@@ -45,7 +45,7 @@ resource "azurerm_monitor_data_collection_rule_association" "windows_vm" {
 
 # DCR Association - RedHat VM
 resource "azurerm_monitor_data_collection_rule_association" "redhat_vm" {
-  count                   = var.redhat_vm_id != null && var.redhat_vm_id != "" ? 1 : 0
+  count                   = var.redhat_vm_name != null && var.redhat_vm_name != "" ? 1 : 0
   name                    = "MSVMI-${var.redhat_vm_name}-dcra"
   target_resource_id      = var.redhat_vm_id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.vm_insights.id
@@ -54,7 +54,7 @@ resource "azurerm_monitor_data_collection_rule_association" "redhat_vm" {
 
 # DCR Association - Ubuntu VM
 resource "azurerm_monitor_data_collection_rule_association" "ubuntu_vm" {
-  count                   = var.ubuntu_vm_id != null && var.ubuntu_vm_id != "" ? 1 : 0
+  count                   = var.ubuntu_vm_name != null && var.ubuntu_vm_name != "" ? 1 : 0
   name                    = "MSVMI-${var.ubuntu_vm_name}-dcra"
   target_resource_id      = var.ubuntu_vm_id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.vm_insights.id

@@ -11,9 +11,9 @@ output "data_collection_rule_name" {
 output "vm_insights_installation_status" {
   description = "Status of VM Insights DCR association for each VM"
   value = {
-    windows = var.windows_vm_id != null && var.windows_vm_id != "" ? "DCR associated" : "Not configured"
-    redhat  = var.redhat_vm_id != null && var.redhat_vm_id != "" ? "DCR associated" : "Not configured"
-    ubuntu  = var.ubuntu_vm_id != null && var.ubuntu_vm_id != "" ? "DCR associated" : "Not configured"
+    windows = var.windows_vm_name != null && var.windows_vm_name != "" ? "DCR associated" : "Not configured"
+    redhat  = var.redhat_vm_name != null && var.redhat_vm_name != "" ? "DCR associated" : "Not configured"
+    ubuntu  = var.ubuntu_vm_name != null && var.ubuntu_vm_name != "" ? "DCR associated" : "Not configured"
   }
 }
 
