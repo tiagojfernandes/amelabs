@@ -95,6 +95,9 @@ resource "azurerm_windows_virtual_machine" "windows_vm" {
   # Install Azure Monitor Agent
   provision_vm_agent = true
 
+  # Required for hotpatch-enabled images such as 2025-datacenter-azure-edition
+  patch_mode = "AutomaticByPlatform"
+
   tags = var.tags
 }
 
