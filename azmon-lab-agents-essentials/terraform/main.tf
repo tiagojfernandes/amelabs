@@ -480,7 +480,7 @@ module "automation_runbook" {
   depends_on = [module.vmss_windows]
 }
 
-# VM Insights Module - Enable VM Insights with Dependency Agent for all VMs
+# VM Insights Module - Enable VM Insights for all VMs (Dependency Agent removed; deprecated)
 module "vm_insights" {
   source = "./modules/vm_insights"
 

@@ -23,6 +23,6 @@ output "vm_insights_installation_status" {
   value = {
     windows = var.windows_vm_name != null && var.windows_vm_name != "" ? "Configured via Install-VMInsights.ps1 script (includes DCR association)" : "Not configured"
     redhat  = var.redhat_vm_name != null && var.redhat_vm_name != "" ? "Configured via Install-VMInsights.ps1 script (includes DCR association)" : "Not configured"
-    ubuntu  = "Skipped - Dependency Agent not supported for this Ubuntu OS version"
+    ubuntu  = var.ubuntu_vm_name != null && var.ubuntu_vm_name != "" ? "Configured via Install-VMInsights.ps1 script (includes DCR association)" : "Not configured"
   }
 }

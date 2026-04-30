@@ -1,9 +1,10 @@
-# Data Collection Rule for VM Insights with Processes and Dependencies
+# Data Collection Rule for VM Insights (performance counters only)
+# Note: Dependency Agent has been deprecated and is no longer installed by this lab.
 resource "azurerm_monitor_data_collection_rule" "vm_insights" {
   name                = "MSVMI-${var.workspace_name}"
   resource_group_name = var.resource_group_name
   location            = var.location
-  description         = "Data Collection Rule for VM Insights with dependency agent"
+  description         = "Data Collection Rule for VM Insights (performance counters)"
 
   destinations {
     log_analytics {
@@ -13,7 +14,7 @@ resource "azurerm_monitor_data_collection_rule" "vm_insights" {
   }
 
   data_flow {
-    streams      = ["Microsoft-InsightsMetrics", "Microsoft-ServiceMap"]
+    streams      = ["Microsoft-InsightsMetrics"]
     destinations = ["VMInsightsPerf-Logs-Dest"]
   }
 
@@ -25,13 +26,6 @@ resource "azurerm_monitor_data_collection_rule" "vm_insights" {
       counter_specifiers = [
         "\\VmInsights\\DetailedMetrics"
       ]
-    }
-
-    # Extension for dependency mapping
-    extension {
-      streams        = ["Microsoft-ServiceMap"]
-      extension_name = "DependencyAgent"
-      name           = "DependencyAgentDataSource"
     }
   }
 
@@ -67,7 +61,6 @@ resource "null_resource" "windows_vm_insights" {
         -DcrResourceId ${azurerm_monitor_data_collection_rule.vm_insights.id} `
         -UserAssignedManagedIdentityResourceGroup ${var.resource_group_name} `
         -UserAssignedManagedIdentityName ${azurerm_user_assigned_identity.vm_insights.name} `
-        -ProcessAndDependencies `
         -Approve
     EOT
 
@@ -87,7 +80,37 @@ resource "null_resource" "windows_vm_insights" {
   }
 }
 
-# Use local-exec provisioner to run the official Install-VMInsights.ps1 script for RedHat VM
+# Use local-exec provisioner to run the official Install-VMInsights.ps1 script for Ubuntu VM
+resource "null_resource" "ubuntu_vm_insights" {
+  count = var.ubuntu_vm_name != null && var.ubuntu_vm_name != "" ? 1 : 0
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      pwsh -NoProfile -ExecutionPolicy Bypass -File "${path.module}/scripts/Install-VMInsights.ps1" `
+        -SubscriptionId ${var.subscription_id} `
+        -ResourceGroup ${var.resource_group_name} `
+        -Name ${var.ubuntu_vm_name} `
+        -DcrResourceId ${azurerm_monitor_data_collection_rule.vm_insights.id} `
+        -UserAssignedManagedIdentityResourceGroup ${var.resource_group_name} `
+        -UserAssignedManagedIdentityName ${azurerm_user_assigned_identity.vm_insights.name} `
+        -Approve
+    EOT
+
+    interpreter = ["pwsh", "-Command"]
+  }
+
+  depends_on = [
+    azurerm_monitor_data_collection_rule.vm_insights,
+    azurerm_user_assigned_identity.vm_insights,
+    azurerm_role_assignment.monitoring_metrics_publisher
+  ]
+
+  triggers = {
+    dcr_id = azurerm_monitor_data_collection_rule.vm_insights.id
+    uami_id = azurerm_user_assigned_identity.vm_insights.id
+    script_hash = filesha256("${path.module}/scripts/Install-VMInsights.ps1")
+  }
+}
 resource "null_resource" "redhat_vm_insights" {
   count = var.redhat_vm_name != null && var.redhat_vm_name != "" ? 1 : 0
 
@@ -100,7 +123,6 @@ resource "null_resource" "redhat_vm_insights" {
         -DcrResourceId ${azurerm_monitor_data_collection_rule.vm_insights.id} `
         -UserAssignedManagedIdentityResourceGroup ${var.resource_group_name} `
         -UserAssignedManagedIdentityName ${azurerm_user_assigned_identity.vm_insights.name} `
-        -ProcessAndDependencies `
         -Approve
     EOT
 
