@@ -11,9 +11,9 @@ resource "azurerm_windows_virtual_machine" "vm" {
 
   # Patch management
   patch_mode                  = var.patch_mode
-  provision_vm_agent         = true
-  allow_extension_operations = true
-  enable_automatic_updates   = var.enable_automatic_updates
+  provision_vm_agent          = true
+  allow_extension_operations  = true
+  automatic_updates_enabled   = var.enable_automatic_updates
 
   os_disk {
     caching              = var.os_disk_caching
