@@ -203,10 +203,20 @@ CUSTOM_PREFIX=${1:-"azmon-${TIMESTAMP}"}
 echo -e "${CYAN}Using prefix: ${CUSTOM_PREFIX}${NC}"
 
 echo -e "${CYAN}Initializing Terraform...${NC}"
-terraform init
+terraform init -upgrade
+
+# Detect Azure subscription ID from current az CLI context (required by azurerm provider v4)
+SUBSCRIPTION_ID=$(az account show --query id -o tsv 2>/dev/null)
+if [ -z "$SUBSCRIPTION_ID" ]; then
+  echo -e "${RED}Could not determine Azure subscription ID. Run 'az login' first.${NC}"
+  exit 1
+fi
+echo -e "${CYAN}Using subscription: ${YELLOW}${SUBSCRIPTION_ID}${NC}"
+export ARM_SUBSCRIPTION_ID="$SUBSCRIPTION_ID"
 
 echo -e "${CYAN}Planning Terraform deployment...${NC}"
 terraform plan \
+  -var="subscription_id=${SUBSCRIPTION_ID}" \
   -var="app_service_prefix=${CUSTOM_PREFIX}" \
   -var="resource_group_name=${RESOURCE_GROUP}" \
   -var="location=${LOCATION}" \
@@ -217,6 +227,7 @@ terraform plan \
 
 echo -e "${CYAN}Applying Terraform configuration...${NC}"
 terraform apply -auto-approve \
+  -var="subscription_id=${SUBSCRIPTION_ID}" \
   -var="app_service_prefix=${CUSTOM_PREFIX}" \
   -var="resource_group_name=${RESOURCE_GROUP}" \
   -var="location=${LOCATION}" \

@@ -60,7 +60,7 @@ variable "java_version" {
 
 variable "java_server" {
   type    = string
-  default = "JAVA"   # Java SE
+  default = "JAVA" # Java SE
 }
 
 variable "java_server_version" {
