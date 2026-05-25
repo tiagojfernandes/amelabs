@@ -96,7 +96,6 @@ ALLOWED_REGIONS=(
   "japanwest"
   "koreacentral"
   "norwayeast"
-  "northeurope"
   "southeastasia"
   "swedencentral"
   "uaenorth"
